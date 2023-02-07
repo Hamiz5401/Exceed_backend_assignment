@@ -67,9 +67,11 @@ def get_reservation_by_room(room_id: int):
 
 @app.post("/reservation", status_code=200)
 def reserve(reservation: Reservation):
-    if not room_avaliable(reservation.room_id, str(reservation.start_date), str(reservation.end_date)) \
-            or reservation.start_date > reservation.end_date \
-            or reservation.room_id not in range(1, 11):
+    if not room_avaliable(reservation.room_id, str(reservation.start_date), str(reservation.end_date)):
+        raise HTTPException(status_code=400)
+    elif reservation.start_date > reservation.end_date:
+        raise HTTPException(status_code=400)
+    elif reservation.room_id not in range(1, 11):
         raise HTTPException(status_code=400)
     else:
         collection.insert_one({
